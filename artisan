@@ -1,0 +1,4 @@
+#!/usr/bin/env php
+<?php
+// Laravel Artisan mock entry
+echo "Laravel Artisan is working";
