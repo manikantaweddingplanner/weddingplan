@@ -13,8 +13,15 @@ RUN apt-get update && apt-get install -y \
     vim unzip git curl libzip-dev libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql zip
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Copy only composer files first to leverage Docker cache
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies before full app copy
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
+
+# Now copy the full application
+COPY . .
+
 
 # Set working directory
 WORKDIR /var/www
