@@ -23,7 +23,8 @@ WORKDIR /var/www
 COPY . .
 
 # Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
+
 
 # Install Node.js + build assets
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
