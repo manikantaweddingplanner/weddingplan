@@ -14,10 +14,12 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql zip
 
 # Copy only composer files first to leverage Docker cache
-COPY composer.json composer.lock ./
+COPY composer.json ./
+
 
 # Install PHP dependencies before full app copy
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
+
 
 # Now copy the full application
 COPY . .
