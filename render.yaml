@@ -25,3 +25,14 @@ services:
         value: YOUR_DB_USER
       - key: DB_PASSWORD
         value: YOUR_DB_PASS
+services:
+  - type: web
+    name: wedding-planner
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    buildCommand: "composer install && php artisan migrate --force"
+    startCommand: "php artisan serve --host=0.0.0.0 --port=8080"
+    envVars:
+      - key: APP_ENV
+        value: production
