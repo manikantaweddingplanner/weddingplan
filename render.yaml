@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: weddingplanner
+    name: wedding-planner
     env: docker
     plan: free
-    repo: https://github.com/manikantaweddingplanner/weddingplan
+    repo: https://github.com/manikantaweddingplanner/wedd
     dockerfilePath: Dockerfile
     branch: main
     envVars:
