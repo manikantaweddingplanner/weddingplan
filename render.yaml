@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: weddingplan
+    name: weddingplanner
     env: docker
     plan: free
     repo: https://github.com/manikantaweddingplanner/weddingplan
     dockerfilePath: Dockerfile
-    branch: master
+    branch: main
     envVars:
       - key: APP_ENV
         value: production
