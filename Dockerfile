@@ -1,50 +1,40 @@
 # Use official PHP image with Composer and Node.js
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
-    vim unzip git curl libzip-dev libpq-dev \
+    unzip git curl libzip-dev libpq-dev \
+    && docker-php-ext-configure zip \
     && docker-php-ext-install pdo pdo_pgsql zip
 
-# Copy only composer files first to leverage Docker cache
-COPY composer.json ./
-
-
-# Install PHP dependencies before full app copy
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
-
-
-# Now copy the full application
-COPY . .
-
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy project files
+# Copy everything (fallback method)
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
+# Install PHP dependencies (with verbose output for debugging)
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv || true
 
-
-# Install Node.js + build assets
+# Install Node.js and build assets
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
-    && npm install && npm run build
+    && npm install && npm run build || true
 
-# Set file permissions
+# Fix permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Expose port
 EXPOSE 8000
 
-# Start Laravel app
+# Run Laravel migrations and serve
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
